@@ -89,6 +89,9 @@
   .arts code{background:#0a1c12;border:1px solid var(--line);border-radius:5px;
     padding:2px 6px;margin-right:5px;color:var(--accent2);font-size:11px}
   .packs{margin-top:8px;font-size:12px;color:var(--dim)}
+  .dose{margin-top:11px;padding:9px 11px;background:#0a1c12;border:1px solid var(--accent);
+    border-radius:9px;font-size:13px;color:var(--accent2)}
+  .dose b{color:var(--txt)}
 
   .btn{
     display:block;width:100%;border-radius:12px;padding:14px;margin-top:9px;
@@ -145,7 +148,7 @@ const T = {
       price:"💶 Узнать цену в боте",pdf:"📄 Скачать PDF в боте",
       ask:"💬 Задать вопрос ИИ",tech:"📊 Технические данные",
       cat:"Категории",prod:"продуктов",app:"аппаратов",
-      backT:"‹ Назад",arts:"Артикулы",packs:"Фасовки",
+      backT:"‹ Назад",arts:"Артикулы",packs:"Фасовки",dose:"Дозировка",
       protocols:"ПРОТОКОЛЫ ВИНОДЕЛИЯ",protocolsS:"Готовые схемы обработки",
       priceNote:"Цены доступны в чате бота — доступ по приглашению.",
       helpT:"Помощь и контакты"},
@@ -162,7 +165,7 @@ const T = {
       price:"💶 Get price in bot",pdf:"📄 Download PDF in bot",
       ask:"💬 Ask the AI",tech:"📊 Technical data",
       cat:"Categories",prod:"products",app:"units",
-      backT:"‹ Back",arts:"Article codes",packs:"Pack sizes",
+      backT:"‹ Back",arts:"Article codes",packs:"Pack sizes",dose:"Dosage",
       protocols:"WINEMAKING PROTOCOLS",protocolsS:"Ready-made treatment schemes",
       priceNote:"Prices are available in the bot chat — access by invitation.",
       helpT:"Help & contacts"},
@@ -179,7 +182,7 @@ const T = {
       price:"💶 Află prețul în bot",pdf:"📄 Descarcă PDF în bot",
       ask:"💬 Întreabă AI",tech:"📊 Date tehnice",
       cat:"Categorii",prod:"produse",app:"aparate",
-      backT:"‹ Înapoi",arts:"Coduri",packs:"Ambalaje",
+      backT:"‹ Înapoi",arts:"Coduri",packs:"Ambalaje",dose:"Dozaj",
       protocols:"PROTOCOALE DE VINIFICAȚIE",protocolsS:"Scheme gata de tratament",
       priceNote:"Prețurile sunt disponibile în chatul botului — acces pe bază de invitație.",
       helpT:"Ajutor și contacte"}
@@ -280,7 +283,7 @@ function vsec(id){
     <button class="row" onclick="go('vprod','${enc(p.name)}')">
       <div class="ic">💊</div>
       <div class="b"><div class="t">${p.name}</div>
-        <div class="s">${(p.desc[L]||p.desc.ru||"").slice(0,60)}</div></div>
+        <div class="s">${(p.dose&&(p.dose[L]||p.dose.ru)) || (p.desc[L]||p.desc.ru||"").slice(0,60)}</div></div>
     </button>`).join("");
   return back() + `<h2>${s.title[L]}</h2><div class="sub">${s.count} ${t("prod")}</div>` + rows;
 }
@@ -289,11 +292,13 @@ function vprod(nameEnc){
   const name = dec(nameEnc);
   const p = DB.vason.products.find(x=>x.name===name);
   const sec = DB.vason.sections.find(s=>s.id===p.section);
+  const dz = (p.dose && (p.dose[L] || p.dose.ru)) || "";
   return back() + `
     <div class="card">
       <h3>${p.name}</h3>
       <div class="tagline">${sec ? sec.title[L] : ""}</div>
       <div class="desc">${esc(p.desc[L] || p.desc.ru || "")}</div>
+      ${dz ? `<div class="dose">💧 <b>${t("dose")}:</b> ${esc(dz)}</div>` : ""}
       <div class="arts">${t("arts")}: ${p.arts.map(a=>`<code>${a}</code>`).join("")}</div>
       ${p.packs.length?`<div class="packs">${t("packs")}: ${p.packs.join(" · ")}</div>`:""}
     </div>
