@@ -104,6 +104,38 @@
   .empty{text-align:center;color:var(--dim);padding:34px 10px;font-size:13.5px}
 
   /* Нижняя навигация */
+  /* Калькулятор */
+  .seg{display:flex;gap:6px;margin:0 0 14px}
+  .seg button{flex:1;background:var(--card);border:1px solid var(--line);color:var(--dim);
+    border-radius:11px;padding:9px 6px;font-size:12.5px;font-weight:700;cursor:pointer}
+  .seg button.on{background:var(--accent);border-color:var(--accent);color:#06180f}
+  .fld{margin-bottom:12px}
+  .fld label{display:block;font-size:12px;color:var(--dim);margin:0 0 5px;font-weight:600}
+  .fld input,.fld select{
+    width:100%;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:11px;padding:11px 12px;font-size:15px;font-family:inherit;outline:none;
+  }
+  .fld input:focus,.fld select:focus{border-color:var(--accent)}
+  .duo{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+  .out{background:var(--card2);border:1px solid var(--accent);border-radius:14px;
+    padding:14px;margin-top:4px}
+  .out .big{font-size:26px;font-weight:800;color:var(--accent2);letter-spacing:.3px}
+  .out .lbl{font-size:12px;color:var(--dim);font-weight:600;margin-bottom:2px}
+  .out .hint{font-size:12px;color:var(--dim);margin-top:8px;line-height:1.5}
+  .out .row2{display:flex;justify-content:space-between;align-items:baseline;
+    padding:7px 0;border-top:1px solid var(--line);margin-top:8px}
+  .out .row2 b{color:var(--txt);font-size:15px;font-weight:700}
+  .tbl{width:100%;border-collapse:collapse;margin-top:10px}
+  .tbl th{font-size:11px;color:var(--dim);text-align:left;font-weight:700;
+    padding:6px 8px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.3px}
+  .tbl td{font-size:14px;padding:8px;border-bottom:1px solid rgba(36,82,57,.5)}
+  .tbl td:first-child{color:var(--dim);white-space:nowrap}
+  .tbl td.v{color:var(--accent2);font-weight:800;text-align:right;white-space:nowrap}
+  .tbl td.d{color:var(--dim);font-size:12px;text-align:right;white-space:nowrap}
+  .tbl tr.dim td{opacity:.45}
+  .tbl tr.dim td.v:after{content:" ⚠"}
+  .warn{background:#3d2a13;border:1px solid var(--gold);border-radius:12px;
+    padding:11px 12px;font-size:12.5px;color:#f0dcb4;margin-top:10px;line-height:1.5}
   .nav{
     position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);
     background:rgba(9,22,15,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
@@ -131,7 +163,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwinebot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-ifruit";
+const DATA_VERSION = "2026-07-12-calc5";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -154,7 +186,23 @@ const T = {
       backT:"‹ Назад",arts:"Артикулы",packs:"Фасовки",dose:"Дозировка",
       protocols:"ПРОТОКОЛЫ ВИНОДЕЛИЯ",protocolsS:"Готовые схемы обработки",
       priceNote:"Цены доступны в чате бота — доступ по приглашению.",
-      helpT:"Помощь и контакты"},
+      helpT:"Помощь и контакты",
+      calc:"Расчёт",calcT:"КАЛЬКУЛЯТОР ДОЗИРОВКИ",calcS:"Граммы на партию, рабочий раствор",
+      mBatch:"На партию",mStock:"Рабочий раствор",
+      fProd:"Продукт",fProdAny:"— выбрать продукт —",fVol:"Объём",
+      fDose:"Доза",fConc:"Концентрация раствора",fSample:"Объём пробы",fAdded:"Внесено раствора",
+      oNeed:"Внести в партию",oStock:"Внести в пробу",oGot:"Получится доза",
+      hDoseCat:"Дозировка по каталогу",noDose:"У этого продукта нет дозировки в каталоге",
+      hPrep:"Как приготовить: {c}% раствор = {g} г продукта растворить до {v} мл водой.",
+      hDrops:"≈ {n} капель (1 мл ≈ 20 капель)",
+      hMedium:"Расчёт объёмный: вино, дистиллят или уксус — разницы нет.",
+      hTiny:"Меньше 0,1 мл (1–2 капли) — точно не отмерить. Возьмите раствор слабее (0,1%) или пробу больше.",
+      hRange:"Диапазон каталога",custom:"своя доза",
+      tblT:"СКОЛЬКО ВНОСИТЬ В ПРОБУ",tDose:"Доза",tMl:"Раствора",tDrop:"Капель",
+      tNote:"⚠ — меньше 0,1 мл, точно не отмерить: возьмите раствор слабее.",
+      hTons:"1 т вина = 1000 л = 10 гл",
+      tblB:"СКОЛЬКО ВНОСИТЬ В ПАРТИЮ",tAmt:"Внести",
+      wCheck:"Проверьте дозу по прайсу перед внесением в товарную партию."},
   en:{home:"Home",search:"Search",docs:"Prices",help:"Help",
       juclas:"JUCLAS EQUIPMENT",juclasS:"Flotation, filtration, oxygenation",
       vason:"VASON PRODUCTS",vasonS:"Yeasts, tannins, enzymes",
@@ -171,7 +219,23 @@ const T = {
       backT:"‹ Back",arts:"Article codes",packs:"Pack sizes",dose:"Dosage",
       protocols:"WINEMAKING PROTOCOLS",protocolsS:"Ready-made treatment schemes",
       priceNote:"Prices are available in the bot chat — access by invitation.",
-      helpT:"Help & contacts"},
+      helpT:"Help & contacts",
+      calc:"Dosing",calcT:"DOSAGE CALCULATOR",calcS:"Grams per batch, stock solution",
+      mBatch:"Per batch",mStock:"Stock solution",
+      fProd:"Product",fProdAny:"— select a product —",fVol:"Volume",
+      fDose:"Dose",fConc:"Solution strength",fSample:"Sample volume",fAdded:"Solution added",
+      oNeed:"Add to the batch",oStock:"Add to the sample",oGot:"Resulting dose",
+      hDoseCat:"Catalogue dosage",noDose:"This product has no dosage in the catalogue",
+      hPrep:"How to prepare: a {c}% solution = {g} g of product made up to {v} mL with water.",
+      hDrops:"≈ {n} drops (1 mL ≈ 20 drops)",
+      hMedium:"The maths is volumetric: wine, spirit or vinegar — no difference.",
+      hTiny:"Below 0.1 mL (1–2 drops) you cannot measure accurately. Use a weaker solution or a larger sample.",
+      hRange:"Catalogue range",custom:"custom dose",
+      tblT:"HOW MUCH TO ADD TO THE SAMPLE",tDose:"Dose",tMl:"Solution",tDrop:"Drops",
+      tNote:"⚠ — under 0.1 mL, not measurable: use a weaker solution.",
+      hTons:"1 t of wine = 1000 L = 10 hL",
+      tblB:"HOW MUCH TO ADD TO THE BATCH",tAmt:"Add",
+      wCheck:"Check the dose against the price list before treating a commercial batch."},
   ro:{home:"Acasă",search:"Căutare",docs:"Prețuri",help:"Ajutor",
       juclas:"ECHIPAMENTE JUCLAS",juclasS:"Flotație, filtrare, oxigenare",
       vason:"PRODUSE VASON",vasonS:"Drojdii, taninuri, enzime",
@@ -188,7 +252,23 @@ const T = {
       backT:"‹ Înapoi",arts:"Coduri",packs:"Ambalaje",dose:"Dozaj",
       protocols:"PROTOCOALE DE VINIFICAȚIE",protocolsS:"Scheme gata de tratament",
       priceNote:"Prețurile sunt disponibile în chatul botului — acces pe bază de invitație.",
-      helpT:"Ajutor și contacte"}
+      helpT:"Ajutor și contacte",
+      calc:"Calcul",calcT:"CALCULATOR DE DOZAJ",calcS:"Grame pe lot, soluție de lucru",
+      mBatch:"Pe lot",mStock:"Soluție de lucru",
+      fProd:"Produs",fProdAny:"— alege produsul —",fVol:"Volum",
+      fDose:"Doză",fConc:"Concentrația soluției",fSample:"Volumul probei",fAdded:"Soluție adăugată",
+      oNeed:"De adăugat în lot",oStock:"De adăugat în probă",oGot:"Doza rezultată",
+      hDoseCat:"Dozaj din catalog",noDose:"Acest produs nu are dozaj în catalog",
+      hPrep:"Preparare: soluție {c}% = {g} g produs dizolvat până la {v} mL cu apă.",
+      hDrops:"≈ {n} picături (1 mL ≈ 20 picături)",
+      hMedium:"Calculul este volumetric: vin, distilat sau oțet — fără diferență.",
+      hTiny:"Sub 0,1 mL (1–2 picături) nu se poate măsura precis. Folosiți o soluție mai slabă sau o probă mai mare.",
+      hRange:"Interval din catalog",custom:"doză proprie",
+      tblT:"CÂT DE ADĂUGAT ÎN PROBĂ",tDose:"Doză",tMl:"Soluție",tDrop:"Picături",
+      tNote:"⚠ — sub 0,1 mL, nu se poate măsura: folosiți o soluție mai slabă.",
+      hTons:"1 t de vin = 1000 L = 10 hL",
+      tblB:"CÂT DE ADĂUGAT ÎN LOT",tAmt:"De adăugat",
+      wCheck:"Verificați doza în lista de prețuri înainte de tratarea unui lot comercial."}
 };
 const t = k => T[L][k];
 
@@ -225,6 +305,9 @@ function home(){
     </button>
     <button class="tile" onclick="go('protocols')">
       <div class="ic">📋</div><div><div class="t">${t("protocols")}</div><div class="s">${t("protocolsS")}</div></div>
+    </button>
+    <button class="tile" onclick="tabTo('calc')">
+      <div class="ic">🧮</div><div><div class="t">${t("calcT")}</div><div class="s">${t("calcS")}</div></div>
     </button>
     <button class="tile" onclick="toBot('ask')">
       <div class="ic">🤖</div><div><div class="t">${t("ai")}</div><div class="s">${t("aiS")}</div></div>
@@ -399,6 +482,245 @@ function helpView(){
     <button class="btn" onclick="toBot('contact')">${t("contact")}</button>`;
 }
 
+
+/* ── Калькулятор дозировки ───────────────────────────────────
+   Дозировки в каталоге: "▸ 25–150 г/гл" либо с уточнением сорта:
+   "▸ 5–15 кр ▸ 1–10 роз ▸ 1–5 бел г/гл". Парсим все диапазоны. */
+let CM = "batch";                       /* режим: batch | stock */
+let CP = "";                            /* выбранный продукт */
+
+function parseDose(s){
+  s = (s || "").trim();
+  if (!s) return null;
+  const unit = /мл\/гл|mL\/hL|ml\/hl/i.test(s) ? "ml" : "g";
+  const out = [];
+  for (const part of s.split("▸")){
+    const p = part.trim();
+    if (!p) continue;
+    const m = p.match(/(\d+(?:[.,]\d+)?)\s*(?:[–—-]\s*(\d+(?:[.,]\d+)?))?/);
+    if (!m) continue;
+    const lo = parseFloat(m[1].replace(",", "."));
+    const hi = m[2] ? parseFloat(m[2].replace(",", ".")) : lo;
+    const note = p.slice(m[0].length)
+                  .replace(/г\/гл|мл\/гл|g\/hL|mL\/hL/gi, "").trim();
+    if (!isNaN(lo)) out.push({lo, hi, note});
+  }
+  return out.length ? {unit, ranges: out} : null;
+}
+
+const dosed = () => DB.vason.products
+  .filter(p => parseDose((p.dose||{})[L] || (p.dose||{}).ru))
+  .sort((a,b)=>a.name.localeCompare(b.name));
+
+const num = (v, d) => { const x = parseFloat(String(v).replace(",", ".")); return isNaN(x) ? d : x; };
+const fmt = x => x >= 100 ? Math.round(x).toLocaleString()
+               : x >= 10  ? x.toFixed(1)
+               : x >= 1   ? x.toFixed(2)
+               : x.toFixed(3);
+
+function calcView(){
+  const opts = dosed().map(p =>
+    `<option value="${esc(p.name)}"${p.name===CP?" selected":""}>${esc(p.name)}</option>`).join("");
+  const seg = `
+    <div class="seg">
+      <button class="${CM==='batch'?'on':''}" onclick="CM='batch';render(calcView())">${t("mBatch")}</button>
+      <button class="${CM==='stock'?'on':''}" onclick="CM='stock';render(calcView())">${t("mStock")}</button>
+    </div>`;
+
+  const picker = `
+    <div class="fld">
+      <label>${t("fProd")}</label>
+      <select id="cp" onchange="CP=this.value; ${CM==='batch'?'doBatch()':'doStock()'}">
+        <option value="">${t("fProdAny")}</option>${opts}
+      </select>
+    </div>`;
+
+  if (CM === "batch"){
+    return `<h2>${t("calcT")}</h2>${seg}${picker}
+      <div class="fld">
+        <label>${t("fDose")} (г/гл · мл/гл)</label>
+        <input id="cd" type="number" inputmode="decimal" value="10" oninput="doBatch()">
+      </div>
+      <div class="fld duo">
+        <div>
+          <label>${t("fVol")}</label>
+          <input id="cv" type="number" inputmode="decimal" value="10" oninput="doBatch()">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <select id="cu" onchange="doBatch()">
+            <option value="t">т вина</option>
+            <option value="hl">гл / hL</option>
+            <option value="l">л / L</option>
+          </select>
+        </div>
+      </div>
+      <div id="cout"></div>`;
+  }
+
+  return `<h2>${t("calcT")}</h2>${seg}${picker}
+    <div class="fld duo">
+      <div>
+        <label>${t("fConc")} (%)</label>
+        <input id="sc" type="number" inputmode="decimal" value="1" step="0.1" oninput="doStock()">
+      </div>
+      <div>
+        <label>${t("fSample")} (мл)</label>
+        <input id="sv" type="number" inputmode="decimal" value="50" oninput="doStock()">
+      </div>
+    </div>
+    <div class="fld">
+      <label>${t("fDose")} (г/гл · мл/гл) — ${t("custom")}</label>
+      <input id="sd" type="number" inputmode="decimal" value="10" oninput="doStock()">
+    </div>
+    <div class="fld">
+      <label>${t("fAdded")} (мл) — ${t("oGot")}</label>
+      <input id="sa" type="number" inputmode="decimal" placeholder="0.5" oninput="doStock()">
+    </div>
+    <div id="sout"></div>`;
+}
+
+function doseOf(name){
+  const p = DB.vason.products.find(x => x.name === name);
+  if (!p) return null;
+  return parseDose((p.dose||{})[L] || (p.dose||{}).ru);
+}
+
+/* режим 1: доза каталога × объём партии */
+/* Тонна = 1000 л вина (объёмная тонна, как принято в виноделии) */
+const L_PER_TON = 1000;
+
+/* Граммы до килограмма, дальше — килограммы */
+function mass(g, unit){
+  if (unit === "мл") return g >= 1000 ? `${fmt(g/1000)} л` : `${fmt(g)} мл`;
+  return g >= 1000 ? `${fmt(g/1000)} кг` : `${fmt(g)} г`;
+}
+
+function doBatch(){
+  const el = document.getElementById("cout");
+  const dd = doseOf(CP);                       /* дозировка каталога, если продукт выбран */
+  const cd = document.getElementById("cd");
+  if (dd && !cd.dataset.touched) cd.value = dd.ranges[0].lo;
+  cd.dataset.touched = "1";
+
+  const dose = num(cd.value, 0);
+  const v    = num(document.getElementById("cv").value, 0);
+  const unit = document.getElementById("cu").value;
+  if (v <= 0){ el.innerHTML = ""; return; }
+
+  /* тонны вина → литры → гектолитры */
+  const litres = unit === "t" ? v * L_PER_TON
+               : unit === "l" ? v
+               :                v * 100;
+  const hl = litres / 100;
+  const u  = (dd && dd.unit === "ml") ? "мл" : "г";
+
+  const volLine = unit === "t"
+    ? `${fmt(v)} т вина · ${fmt(litres)} л · ${fmt(hl)} гл`
+    : `${fmt(hl)} гл · ${fmt(litres)} л`;
+
+  /* если выбран продукт — показываем и его диапазон из каталога */
+  const rows = dd ? dd.ranges.map(r => {
+    const lo = r.lo * hl, hi = r.hi * hl;
+    const val = lo === hi ? mass(lo,u) : `${mass(lo,u)} – ${mass(hi,u)}`;
+    const note = esc(r.note) || t("hRange");
+    return `<div class="row2"><span>${note} · ${r.lo}–${r.hi} ${u}/гл</span><b>${val}</b></div>`;
+  }).join("") : "";
+
+  /* таблица ходовых доз для этой же партии */
+  const tbl = DOSES.map(d => `
+    <tr><td>${d} ${u}/гл</td><td class="v">${mass(d*hl, u)}</td></tr>`).join("");
+
+  el.innerHTML = `
+    <div class="out">
+      <div class="lbl">${t("oNeed")} · ${volLine}</div>
+      <div class="big">${dose > 0 ? mass(dose*hl, u) : "—"}</div>
+      ${dose > 0 ? `<div class="hint">${t("fDose")}: ${fmt(dose)} ${u}/гл</div>` : ""}
+      ${rows}
+      ${dd ? `<div class="hint">${t("hDoseCat")}: ${esc((DB.vason.products.find(x=>x.name===CP).dose||{})[L] || "")}</div>` : ""}
+      ${unit === "t" ? `<div class="hint">${t("hTons")}</div>` : ""}
+    </div>
+    <div class="out" style="margin-top:12px">
+      <div class="lbl">${t("tblB")} · ${fmt(hl)} гл</div>
+      <table class="tbl">
+        <tr><th>${t("tDose")}</th><th style="text-align:right">${t("tAmt")}</th></tr>
+        ${tbl}
+      </table>
+    </div>
+    <div class="warn">${t("wCheck")}</div>`;
+}
+
+/* Таблица «доза → сколько мл раствора» для введённых % и объёма пробы */
+const DOSES = [1, 2, 3, 5, 8, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150];
+
+function doseTable(c, v){
+  const rows = DOSES.map(d => {
+    const ml = d * v / (1000 * c);
+    const tiny = ml < 0.1;
+    return `<tr class="${tiny ? 'dim' : ''}">
+      <td>${d} г/гл</td>
+      <td class="v">${fmt(ml)} мл</td>
+      <td class="d">${ml >= 0.05 ? "≈ " + Math.round(ml*20) : "<1"}</td>
+    </tr>`;
+  }).join("");
+  const anyTiny = DOSES.some(d => d * v / (1000 * c) < 0.1);
+  return `
+    <div class="out" style="margin-top:12px">
+      <div class="lbl">${t("tblT")} · ${fmt(v)} мл · ${c}%</div>
+      <table class="tbl">
+        <tr><th>${t("tDose")}</th><th style="text-align:right">${t("tMl")}</th><th style="text-align:right">${t("tDrop")}</th></tr>
+        ${rows}
+      </table>
+      ${anyTiny ? `<div class="hint">${t("tNote")}</div>` : ""}
+    </div>`;
+}
+
+/* режим 2: рабочий раствор для лабораторной пробы */
+function doStock(){
+  const el = document.getElementById("sout");
+  const c  = num(document.getElementById("sc").value, 0);   /* % раствора  */
+  const v  = num(document.getElementById("sv").value, 0);   /* мл пробы    */
+  const dd = doseOf(CP);
+  const sd = document.getElementById("sd");
+  if (dd && document.activeElement !== sd && !sd.dataset.touched){
+    sd.value = dd.ranges[0].lo;                              /* подставляем нижнюю дозу */
+  }
+  sd.dataset.touched = "1";
+  const d  = num(sd.value, 0);                              /* г/гл или мл/гл */
+  const added = num(document.getElementById("sa").value, NaN);
+
+  if (c <= 0 || v <= 0){ el.innerHTML = ""; return; }
+
+  /* мл раствора = доза × объём_пробы / (1000 × %) */
+  const ml = d * v / (1000 * c);
+  const g  = c * v / 100;   /* сколько грамм продукта на объём готового раствора v — для подсказки */
+
+  const prep = t("hPrep").replace("{c}", c).replace("{g}", fmt(c)).replace("{v}", "100");
+  const drops = t("hDrops").replace("{n}", Math.round(ml * 20));
+
+  let back = "";
+  if (!isNaN(added) && added > 0){
+    const gotDose = added * 1000 * c / v;                    /* обратный расчёт */
+    back = `<div class="row2"><span>${t("oGot")} · ${fmt(added)} мл</span><b>${fmt(gotDose)} г/гл</b></div>`;
+  }
+
+  const tiny = (ml > 0 && ml < 0.1) ? `<div class="warn">${t("hTiny")}</div>` : "";
+  const rangeHint = dd
+    ? `<div class="hint">${t("hRange")}: ${esc((DB.vason.products.find(x=>x.name===CP).dose||{})[L] || "")}</div>`
+    : "";
+
+  el.innerHTML = `
+    <div class="out">
+      <div class="lbl">${t("oStock")} · ${fmt(v)} мл</div>
+      <div class="big">${d > 0 ? fmt(ml) + " мл" : "—"}</div>
+      ${d > 0 ? `<div class="hint">${drops}</div>` : ""}
+      ${back}
+      <div class="hint">${prep}</div>
+      <div class="hint">${t("hMedium")}</div>
+      ${rangeHint}
+    </div>${tiny}${doseTable(c, v)}`;
+}
+
 /* ── Роутер ─────────────────────────────────────────────── */
 const VIEWS = {home, juclas, jcat, japp, vason, vsec, vprod, protocols};
 function go(name, arg){
@@ -417,11 +739,13 @@ function render(html){ document.getElementById("view").innerHTML = html; }
 
 function tabTo(tb){
   tab = tb; stack = [];
-  render(tb==="home"?home(): tb==="search"?searchView(): tb==="docs"?docsView(): helpView());
+  render(tb==="home"?home(): tb==="search"?searchView(): tb==="calc"?calcView():
+         tb==="docs"?docsView(): helpView());
+  if (tb==="calc"){ CM==="batch" ? doBatch() : doStock(); }
   drawNav(); window.scrollTo(0,0);
 }
 function drawNav(){
-  const items=[["home","🏠"],["search","🔍"],["docs","💶"],["help","💬"]];
+  const items=[["home","🏠"],["search","🔍"],["calc","🧮"],["docs","💶"],["help","💬"]];
   document.getElementById("nav").innerHTML = items.map(([k,ic])=>`
     <button class="${tab===k?'on':''}" onclick="tabTo('${k}')">
       <div class="ic">${ic}</div>${t(k)}
