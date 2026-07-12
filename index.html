@@ -324,15 +324,17 @@ function doSearch(q){
   const hits = [];
   for (const p of DB.vason.products){
     const nl = p.name.toLowerCase();
-    let sc = nl.includes(q) ? 100 - Math.abs(nl.length-q.length)
-           : p.arts.some(a=>a.toLowerCase().includes(q)) ? 95
-           : (p.desc[L]||p.desc.ru||"").toLowerCase().includes(q) ? 40 : sim(q,nl);
-    if (sc >= 45) hits.push({sc, kind:"v", name:p.name, sub:p.arts.join(" · ")});
+    let sc;
+    if (p.arts.some(a=>a.toLowerCase().includes(q))) sc = 130;
+    else if (nl.includes(q)) sc = 110 - Math.abs(nl.length - q.length);
+    else if ((p.desc[L]||p.desc.ru||"").toLowerCase().includes(q)) sc = 55;
+    else sc = sim(q, nl);
+    if (sc >= 62) hits.push({sc, kind:"v", name:p.name, sub:p.arts.join(" · ")});
   }
   for (const [aid,a] of Object.entries(DB.juclas.apparatus)){
     const tl = a.title[L].toLowerCase();
-    const sc = tl.includes(q) ? 100 - Math.abs(tl.length-q.length) : sim(q,tl);
-    if (sc >= 45) hits.push({sc, kind:"j", name:a.title[L], sub:"JUCLAS", id:aid});
+    const sc = tl.includes(q) ? 110 - Math.abs(tl.length - q.length) : sim(q, tl);
+    if (sc >= 62) hits.push({sc, kind:"j", name:a.title[L], sub:"JUCLAS", id:aid});
   }
   if (!hits.length){ el.innerHTML = `<div class="empty">${t("nores")}</div>`; return; }
   hits.sort((a,b)=>b.sc-a.sc);
@@ -343,12 +345,30 @@ function doSearch(q){
     </button>`).join("");
 }
 
-/* нечёткое совпадение — ловит опечатки (SMARTGUN → SMARTGUM) */
+/* Расстояние Левенштейна: ловит опечатки (SMARTGUN → SMARTGUM),
+   но не даёт ложных совпадений вроде SMARTGUN → MPA. */
+function lev(a,b){
+  const m=a.length, n=b.length;
+  if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,j)=>j), cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    }
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
 function sim(a,b){
-  if (b.includes(a)) return 90;
-  let m=0, j=0;
-  for (const ch of a){ const k=b.indexOf(ch,j); if(k>=0){m++;j=k+1;} }
-  return Math.round(m/Math.max(a.length,1) * (a.length/Math.max(b.length,1)) * 110);
+  /* лучшее совпадение по любому слову в названии — «gum» найдёт «SMARTGUM® 2.0» */
+  let best = 1 - lev(a,b)/Math.max(a.length,b.length);
+  for (const w of b.split(/[\s·®,\/]+/)){
+    if (!w) continue;
+    const r = 1 - lev(a,w)/Math.max(a.length,w.length);
+    if (r > best) best = r;
+  }
+  return Math.round(best*100);
 }
 
 function docsView(){
