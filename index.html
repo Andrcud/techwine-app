@@ -129,6 +129,9 @@
 <script>
 const TG = window.Telegram?.WebApp;
 const BOT = "techwinebot";   // @username бота, без @
+/* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
+   иначе у пользователей навсегда останется старый каталог из кеша браузера. */
+const DATA_VERSION = "2026-07-12-dose";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -442,7 +445,7 @@ const dec = s => decodeURIComponent(s);
   TG?.ready(); TG?.expand();
   try { TG.setHeaderColor("#0b1a14"); TG.setBackgroundColor("#0b1a14"); } catch(e){}
   try{
-    DB = await (await fetch("catalog.json")).json();
+    DB = await (await fetch("catalog.json?v=" + DATA_VERSION)).json();
   }catch(e){
     document.getElementById("view").innerHTML =
       `<div class="empty">⚠️ catalog.json не загружен</div>`;
