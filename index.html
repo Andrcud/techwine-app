@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TechWine — VasonGroup</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --bg:#0b1a14; --bg2:#0f2419; --card:#13301f; --card2:#183d28;
+    --line:#245239; --accent:#2fbf71; --accent2:#7fe3a8;
+    --txt:#eaf5ee; --dim:#8fae9c; --gold:#d9b26a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;padding:0;background:linear-gradient(180deg,#0a1811,#0b1a14 40%,#08130e);
+    color:var(--txt);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh;padding-bottom:76px;
+  }
+  .wrap{padding:12px 12px 0}
+  .hd{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+  .brand{font-size:17px;font-weight:700;letter-spacing:.3px}
+  .brand span{color:var(--accent)}
+  .lang{display:flex;gap:6px}
+  .lang button{
+    background:var(--card);border:1px solid var(--line);color:var(--dim);
+    border-radius:9px;padding:5px 9px;font-size:12px;font-weight:600;cursor:pointer;
+  }
+  .lang button.on{background:var(--accent);border-color:var(--accent);color:#06180f}
+
+  /* Плитки */
+  .hero{
+    display:block;width:100%;border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg,#164a2c,#0f2f1d 70%);
+    padding:20px 16px;margin-bottom:12px;text-align:left;cursor:pointer;
+    position:relative;overflow:hidden;
+  }
+  .hero:after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;
+    background:radial-gradient(circle,rgba(47,191,113,.35),transparent 65%);}
+  .hero .ic{font-size:30px}
+  .hero .t{font-size:17px;font-weight:800;margin-top:6px;letter-spacing:.4px}
+  .hero .s{font-size:12.5px;color:var(--accent2);margin-top:3px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .tile{
+    border:1px solid var(--line);border-radius:15px;
+    background:linear-gradient(160deg,var(--card2),var(--card));
+    padding:16px 13px 14px;min-height:112px;cursor:pointer;text-align:left;
+    display:flex;flex-direction:column;justify-content:space-between;
+    color:var(--txt);
+  }
+  .tile:active{transform:scale(.975)}
+  .tile .ic{font-size:26px}
+  .tile .t{font-size:13.5px;font-weight:800;letter-spacing:.3px;line-height:1.25}
+  .tile .s{font-size:11px;color:var(--dim);margin-top:2px;font-weight:500}
+
+  /* Списки */
+  .row{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin-bottom:8px;cursor:pointer;color:var(--txt);
+  }
+  .row:active{background:var(--card2)}
+  .row .ic{font-size:19px;flex:0 0 auto}
+  .row .b{flex:1;min-width:0}
+  .row .t{font-size:14px;font-weight:700;line-height:1.3}
+  .row .s{font-size:11.5px;color:var(--dim);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .n{font-size:11px;color:var(--accent);font-weight:700;flex:0 0 auto}
+
+  .back{background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;
+    padding:6px 0 10px;cursor:pointer}
+  h2{font-size:18px;margin:0 0 12px;font-weight:800}
+  .sub{color:var(--dim);font-size:12px;margin:-6px 0 12px}
+
+  /* Поиск */
+  .search{
+    width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;color:var(--txt);font-size:15px;margin-bottom:12px;outline:none;
+  }
+  .search:focus{border-color:var(--accent)}
+
+  /* Карточка */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:11px}
+  .card h3{margin:0 0 4px;font-size:17px}
+  .tagline{color:var(--accent2);font-size:12px;margin-bottom:10px}
+  .desc{font-size:13.5px;color:#cfe3d6;white-space:pre-wrap}
+  .arts{margin-top:11px;font-size:11.5px;color:var(--dim)}
+  .arts code{background:#0a1c12;border:1px solid var(--line);border-radius:5px;
+    padding:2px 6px;margin-right:5px;color:var(--accent2);font-size:11px}
+  .packs{margin-top:8px;font-size:12px;color:var(--dim)}
+
+  .btn{
+    display:block;width:100%;border-radius:12px;padding:14px;margin-top:9px;
+    font-size:14.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);
+    background:var(--card2);color:var(--txt);text-align:center;
+  }
+  .btn.pri{background:linear-gradient(135deg,var(--accent),#1f9d59);border-color:var(--accent);color:#06180f}
+  .btn.gold{background:linear-gradient(135deg,#c9a15b,#a8813f);border-color:var(--gold);color:#1a1204}
+
+  .empty{text-align:center;color:var(--dim);padding:34px 10px;font-size:13.5px}
+
+  /* Нижняя навигация */
+  .nav{
+    position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);
+    background:rgba(9,22,15,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .nav button{background:none;border:none;color:var(--dim);font-size:10.5px;font-weight:600;
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:2px}
+  .nav button .ic{font-size:19px}
+  .nav button.on{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <div class="brand">TECH<span>WINE</span></div>
+    <div class="lang" id="lang"></div>
+  </div>
+  <div id="view"></div>
+</div>
+
+<div class="nav" id="nav"></div>
+
+<script>
+const TG = window.Telegram?.WebApp;
+const BOT = "techwinebot";   // @username бота, без @
+
+let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
+      : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
+let DB = null, stack = [], tab = "home";
+
+const T = {
+  ru:{home:"Главная",search:"Поиск",docs:"Прайсы",help:"Помощь",
+      juclas:"ОБОРУДОВАНИЕ JUCLAS",juclasS:"Флотация, фильтрация, оксигенация",
+      vason:"ПРОДУКТЫ VASON",vasonS:"Дрожжи, танины, ферменты",
+      searchT:"ПОИСК",searchS:"Продукт, аппарат или артикул",
+      docsT:"ПРАЙСЫ И КАТАЛОГИ",docsS:"PDF в чат бота",
+      ai:"СПРОСИТЬ ИИ",aiS:"Дозировки, протоколы, подбор",
+      contact:"КОНТАКТЫ",contactS:"TechWine · VasonGroup",
+      free:"ВЫБРАТЬ ОБОРУДОВАНИЕ И ПРОДУКТЫ",freeS:"Полный каталог VasonGroup 2026",
+      ph:"Введите название или артикул…",
+      nores:"Ничего не найдено",minc:"Введите минимум 2 символа",
+      price:"💶 Узнать цену в боте",pdf:"📄 Скачать PDF в боте",
+      ask:"💬 Задать вопрос ИИ",tech:"📊 Технические данные",
+      cat:"Категории",prod:"продуктов",app:"аппаратов",
+      backT:"‹ Назад",arts:"Артикулы",packs:"Фасовки",
+      protocols:"ПРОТОКОЛЫ ВИНОДЕЛИЯ",protocolsS:"Готовые схемы обработки",
+      priceNote:"Цены доступны в чате бота — доступ по приглашению.",
+      helpT:"Помощь и контакты"},
+  en:{home:"Home",search:"Search",docs:"Prices",help:"Help",
+      juclas:"JUCLAS EQUIPMENT",juclasS:"Flotation, filtration, oxygenation",
+      vason:"VASON PRODUCTS",vasonS:"Yeasts, tannins, enzymes",
+      searchT:"SEARCH",searchS:"Product, equipment or code",
+      docsT:"PRICE LISTS & CATALOGUES",docsS:"PDF to bot chat",
+      ai:"ASK AI",aiS:"Dosages, protocols, selection",
+      contact:"CONTACTS",contactS:"TechWine · VasonGroup",
+      free:"BROWSE EQUIPMENT & PRODUCTS",freeS:"Full VasonGroup catalogue 2026",
+      ph:"Type a name or article code…",
+      nores:"Nothing found",minc:"Enter at least 2 characters",
+      price:"💶 Get price in bot",pdf:"📄 Download PDF in bot",
+      ask:"💬 Ask the AI",tech:"📊 Technical data",
+      cat:"Categories",prod:"products",app:"units",
+      backT:"‹ Back",arts:"Article codes",packs:"Pack sizes",
+      protocols:"WINEMAKING PROTOCOLS",protocolsS:"Ready-made treatment schemes",
+      priceNote:"Prices are available in the bot chat — access by invitation.",
+      helpT:"Help & contacts"},
+  ro:{home:"Acasă",search:"Căutare",docs:"Prețuri",help:"Ajutor",
+      juclas:"ECHIPAMENTE JUCLAS",juclasS:"Flotație, filtrare, oxigenare",
+      vason:"PRODUSE VASON",vasonS:"Drojdii, taninuri, enzime",
+      searchT:"CĂUTARE",searchS:"Produs, aparat sau cod",
+      docsT:"LISTE DE PREȚURI",docsS:"PDF în chatul botului",
+      ai:"ÎNTREABĂ AI",aiS:"Dozaje, protocoale, selecție",
+      contact:"CONTACTE",contactS:"TechWine · VasonGroup",
+      free:"ALEGE ECHIPAMENTE ȘI PRODUSE",freeS:"Catalogul complet VasonGroup 2026",
+      ph:"Scrie numele sau codul…",
+      nores:"Nu s-a găsit nimic",minc:"Introdu cel puțin 2 caractere",
+      price:"💶 Află prețul în bot",pdf:"📄 Descarcă PDF în bot",
+      ask:"💬 Întreabă AI",tech:"📊 Date tehnice",
+      cat:"Categorii",prod:"produse",app:"aparate",
+      backT:"‹ Înapoi",arts:"Coduri",packs:"Ambalaje",
+      protocols:"PROTOCOALE DE VINIFICAȚIE",protocolsS:"Scheme gata de tratament",
+      priceNote:"Prețurile sunt disponibile în chatul botului — acces pe bază de invitație.",
+      helpT:"Ajutor și contacte"}
+};
+const t = k => T[L][k];
+
+/* ── Возврат в бота: закрываем WebApp и открываем чат с payload ── */
+function toBot(payload){
+  const url = `https://t.me/${BOT}?start=${payload}`;
+  TG?.HapticFeedback?.impactOccurred?.("medium");
+  if (TG?.openTelegramLink) { TG.openTelegramLink(url); TG.close?.(); }
+  else window.open(url, "_blank");
+}
+const slug = s => s.replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,48);
+
+/* ── Экраны ─────────────────────────────────────────────── */
+function home(){
+  stack = [];
+  return `
+  <button class="hero" onclick="go('juclas')">
+    <div class="ic">🍷</div>
+    <div class="t">${t("free")}</div>
+    <div class="s">${t("freeS")}</div>
+  </button>
+  <div class="grid">
+    <button class="tile" onclick="go('juclas')">
+      <div class="ic">⚙️</div><div><div class="t">${t("juclas")}</div><div class="s">${t("juclasS")}</div></div>
+    </button>
+    <button class="tile" onclick="go('vason')">
+      <div class="ic">🍇</div><div><div class="t">${t("vason")}</div><div class="s">${t("vasonS")}</div></div>
+    </button>
+    <button class="tile" onclick="tabTo('search')">
+      <div class="ic">🔍</div><div><div class="t">${t("searchT")}</div><div class="s">${t("searchS")}</div></div>
+    </button>
+    <button class="tile" onclick="tabTo('docs')">
+      <div class="ic">💶</div><div><div class="t">${t("docsT")}</div><div class="s">${t("docsS")}</div></div>
+    </button>
+    <button class="tile" onclick="go('protocols')">
+      <div class="ic">📋</div><div><div class="t">${t("protocols")}</div><div class="s">${t("protocolsS")}</div></div>
+    </button>
+    <button class="tile" onclick="toBot('ask')">
+      <div class="ic">🤖</div><div><div class="t">${t("ai")}</div><div class="s">${t("aiS")}</div></div>
+    </button>
+  </div>`;
+}
+
+function juclas(){
+  const rows = DB.juclas.categories.map(c=>`
+    <button class="row" onclick="go('jcat','${c.id}')">
+      <div class="ic">⚙️</div>
+      <div class="b"><div class="t">${c.title[L]}</div></div>
+      <div class="n">${c.apparatus.length}</div>
+    </button>`).join("");
+  return back() + `<h2>${t("juclas")}</h2><div class="sub">${DB.juclas.categories.length} ${t("cat").toLowerCase()}</div>` + rows;
+}
+
+function jcat(id){
+  const c = DB.juclas.categories.find(x=>x.id===id);
+  const rows = c.apparatus.map(aid=>{
+    const a = DB.juclas.apparatus[aid];
+    return `<button class="row" onclick="go('japp','${aid}')">
+      <div class="ic">🔧</div>
+      <div class="b"><div class="t">${a.title[L]}</div></div>
+      ${a.pdf?'<div class="n">PDF</div>':''}
+    </button>`;
+  }).join("") || `<div class="empty">—</div>`;
+  return back() + `<h2>${c.title[L]}</h2>` + rows;
+}
+
+function japp(aid){
+  const a = DB.juclas.apparatus[aid];
+  const short = a.short[L] || a.title[L];
+  return back() + `
+    <div class="card">
+      <h3>${a.title[L]}</h3>
+      <div class="desc">${esc(short)}</div>
+    </div>
+    ${a.tech[L] ? `<div class="card"><div class="tagline">${t("tech")}</div><div class="desc">${esc(a.tech[L])}</div></div>` : ""}
+    <button class="btn gold" onclick="toBot('p_${slug(aid)}')">${t("price")}</button>
+    ${a.pdf ? `<button class="btn" onclick="toBot('pdf_${slug(aid)}')">${t("pdf")}</button>` : ""}
+    <button class="btn pri" onclick="toBot('ask_${slug(aid)}')">${t("ask")}</button>
+    <div class="sub" style="margin-top:12px">${t("priceNote")}</div>`;
+}
+
+function vason(){
+  const rows = DB.vason.sections.map(s=>`
+    <button class="row" onclick="go('vsec','${s.id}')">
+      <div class="ic">🍇</div>
+      <div class="b"><div class="t">${s.title[L]}</div></div>
+      <div class="n">${s.count}</div>
+    </button>`).join("");
+  return back() + `<h2>${t("vason")}</h2><div class="sub">${DB.vason.products.length} ${t("prod")}</div>` + rows;
+}
+
+function vsec(id){
+  const s = DB.vason.sections.find(x=>x.id===id);
+  const rows = DB.vason.products.filter(p=>p.section===id).map(p=>`
+    <button class="row" onclick="go('vprod','${enc(p.name)}')">
+      <div class="ic">💊</div>
+      <div class="b"><div class="t">${p.name}</div>
+        <div class="s">${(p.desc[L]||p.desc.ru||"").slice(0,60)}</div></div>
+    </button>`).join("");
+  return back() + `<h2>${s.title[L]}</h2><div class="sub">${s.count} ${t("prod")}</div>` + rows;
+}
+
+function vprod(nameEnc){
+  const name = dec(nameEnc);
+  const p = DB.vason.products.find(x=>x.name===name);
+  const sec = DB.vason.sections.find(s=>s.id===p.section);
+  return back() + `
+    <div class="card">
+      <h3>${p.name}</h3>
+      <div class="tagline">${sec ? sec.title[L] : ""}</div>
+      <div class="desc">${esc(p.desc[L] || p.desc.ru || "")}</div>
+      <div class="arts">${t("arts")}: ${p.arts.map(a=>`<code>${a}</code>`).join("")}</div>
+      ${p.packs.length?`<div class="packs">${t("packs")}: ${p.packs.join(" · ")}</div>`:""}
+    </div>
+    <button class="btn gold" onclick="toBot('p_${p.arts[0]}')">${t("price")}</button>
+    <button class="btn pri" onclick="toBot('ask_${p.arts[0]}')">${t("ask")}</button>
+    <div class="sub" style="margin-top:12px">${t("priceNote")}</div>`;
+}
+
+function protocols(){
+  const rows = DB.protocols.map(p=>`
+    <button class="row" onclick="toBot('${p.id}')">
+      <div class="ic">📋</div><div class="b"><div class="t">${p.label}</div></div>
+      <div class="n">PDF</div>
+    </button>`).join("");
+  return back() + `<h2>${t("protocols")}</h2><div class="sub">${t("docsS")}</div>` + rows;
+}
+
+function searchView(){
+  return `<h2>${t("searchT")}</h2>
+    <input class="search" id="q" placeholder="${t("ph")}" oninput="doSearch(this.value)" autocomplete="off">
+    <div id="res"><div class="empty">${t("searchS")}</div></div>`;
+}
+
+function doSearch(q){
+  const el = document.getElementById("res");
+  q = (q||"").trim().toLowerCase();
+  if (q.length < 2){ el.innerHTML = `<div class="empty">${t("minc")}</div>`; return; }
+  const hits = [];
+  for (const p of DB.vason.products){
+    const nl = p.name.toLowerCase();
+    let sc = nl.includes(q) ? 100 - Math.abs(nl.length-q.length)
+           : p.arts.some(a=>a.toLowerCase().includes(q)) ? 95
+           : (p.desc[L]||p.desc.ru||"").toLowerCase().includes(q) ? 40 : sim(q,nl);
+    if (sc >= 45) hits.push({sc, kind:"v", name:p.name, sub:p.arts.join(" · ")});
+  }
+  for (const [aid,a] of Object.entries(DB.juclas.apparatus)){
+    const tl = a.title[L].toLowerCase();
+    const sc = tl.includes(q) ? 100 - Math.abs(tl.length-q.length) : sim(q,tl);
+    if (sc >= 45) hits.push({sc, kind:"j", name:a.title[L], sub:"JUCLAS", id:aid});
+  }
+  if (!hits.length){ el.innerHTML = `<div class="empty">${t("nores")}</div>`; return; }
+  hits.sort((a,b)=>b.sc-a.sc);
+  el.innerHTML = hits.slice(0,30).map(h=>`
+    <button class="row" onclick="${h.kind==='v'?`go('vprod','${enc(h.name)}')`:`go('japp','${h.id}')`}">
+      <div class="ic">${h.kind==='v'?'💊':'⚙️'}</div>
+      <div class="b"><div class="t">${h.name}</div><div class="s">${h.sub}</div></div>
+    </button>`).join("");
+}
+
+/* нечёткое совпадение — ловит опечатки (SMARTGUN → SMARTGUM) */
+function sim(a,b){
+  if (b.includes(a)) return 90;
+  let m=0, j=0;
+  for (const ch of a){ const k=b.indexOf(ch,j); if(k>=0){m++;j=k+1;} }
+  return Math.round(m/Math.max(a.length,1) * (a.length/Math.max(b.length,1)) * 110);
+}
+
+function docsView(){
+  const rows = DB.docs.map(d=>`
+    <button class="row" onclick="toBot('${d.id}')">
+      <div class="ic">💶</div><div class="b"><div class="t">${d.label}</div></div>
+      <div class="n">PDF</div>
+    </button>`).join("");
+  return `<h2>${t("docsT")}</h2><div class="sub">${t("priceNote")}</div>` + rows;
+}
+
+function helpView(){
+  return `<h2>${t("helpT")}</h2>
+    <div class="card">
+      <h3>TechWine</h3>
+      <div class="tagline">${t("contactS")}</div>
+      <div class="desc">📧 Ceo@tech-wine.com\n📱 +373 798 14998\n📧 sales@tech-wine.com</div>
+    </div>
+    <button class="btn pri" onclick="toBot('ask')">${t("ask")}</button>
+    <button class="btn" onclick="toBot('contact')">${t("contact")}</button>`;
+}
+
+/* ── Роутер ─────────────────────────────────────────────── */
+const VIEWS = {home, juclas, jcat, japp, vason, vsec, vprod, protocols};
+function go(name, arg){
+  stack.push([name, arg]);
+  render(VIEWS[name](arg));
+  window.scrollTo(0,0);
+}
+function back(){ return `<button class="back" onclick="pop()">${t("backT")}</button>`; }
+function pop(){
+  stack.pop();
+  const [n,a] = stack[stack.length-1] || ["home"];
+  if (n==="home"){ stack=[]; render(home()); } else { render(VIEWS[n](a)); }
+  window.scrollTo(0,0);
+}
+function render(html){ document.getElementById("view").innerHTML = html; }
+
+function tabTo(tb){
+  tab = tb; stack = [];
+  render(tb==="home"?home(): tb==="search"?searchView(): tb==="docs"?docsView(): helpView());
+  drawNav(); window.scrollTo(0,0);
+}
+function drawNav(){
+  const items=[["home","🏠"],["search","🔍"],["docs","💶"],["help","💬"]];
+  document.getElementById("nav").innerHTML = items.map(([k,ic])=>`
+    <button class="${tab===k?'on':''}" onclick="tabTo('${k}')">
+      <div class="ic">${ic}</div>${t(k)}
+    </button>`).join("");
+}
+function drawLang(){
+  document.getElementById("lang").innerHTML = ["ru","en","ro"].map(l=>
+    `<button class="${L===l?'on':''}" onclick="setLang('${l}')">${l.toUpperCase()}</button>`).join("");
+}
+function setLang(l){
+  L=l; localStorage.setItem("tw_lang",l);
+  drawLang(); drawNav(); tabTo(tab);
+}
+
+const esc = s => (s||"").replace(/[<>]/g,c=>({"<":"&lt;",">":"&gt;"}[c]));
+const enc = s => encodeURIComponent(s).replace(/'/g,"%27");
+const dec = s => decodeURIComponent(s);
+
+/* ── Старт ──────────────────────────────────────────────── */
+(async function(){
+  TG?.ready(); TG?.expand();
+  try { TG.setHeaderColor("#0b1a14"); TG.setBackgroundColor("#0b1a14"); } catch(e){}
+  try{
+    DB = await (await fetch("catalog.json")).json();
+  }catch(e){
+    document.getElementById("view").innerHTML =
+      `<div class="empty">⚠️ catalog.json не загружен</div>`;
+    return;
+  }
+  drawLang(); drawNav(); tabTo("home");
+})();
+</script>
+</body>
+</html>
