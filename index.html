@@ -137,6 +137,11 @@
   .tbl tr.dim td.v:after{content:" ⚠"}
   .warn{background:#3d2a13;border:1px solid var(--gold);border-radius:12px;
     padding:11px 12px;font-size:12.5px;color:#f0dcb4;margin-top:10px;line-height:1.5}
+  .dzhint{background:#0a1c12;border:1px solid var(--accent);border-radius:11px;
+    padding:10px 12px;margin:-4px 0 12px;font-size:13px;color:var(--accent2);
+    display:none;line-height:1.45}
+  .dzhint b{color:var(--txt);font-weight:800}
+  .dzhint .n{color:var(--dim);font-size:11.5px;display:block;margin-top:3px}
   /* Проблемы */
   .prob{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
     background:var(--card);border:1px solid var(--line);border-radius:13px;
@@ -190,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-prob";
+const DATA_VERSION = "2026-07-12-dose";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -219,7 +224,9 @@ const T = {
       fProd:"Продукт",fProdAny:"— выбрать продукт —",fVol:"Объём",
       fDose:"Доза",fConc:"Концентрация раствора",fSample:"Объём пробы",fAdded:"Внесено раствора",
       oNeed:"Внести в партию",oStock:"Внести в пробу",oGot:"Получится доза",
-      hDoseCat:"Дозировка по каталогу",noDose:"У этого продукта нет дозировки в каталоге",
+      hDoseCat:"Дозировка по каталогу",dzPick:"Дозировка по каталогу",
+      dzNone:"Дозировки нет в каталоге — уточните у поставщика",
+      dzHint:"Подставлена нижняя граница. Дозу можно изменить вручную.",noDose:"У этого продукта нет дозировки в каталоге",
       hPrep:"Как приготовить: {c}% раствор = {g} г продукта растворить до {v} мл водой.",
       hDrops:"≈ {n} капель (1 мл ≈ 20 капель)",
       hMedium:"Расчёт объёмный: вино, дистиллят или уксус — разницы нет.",
@@ -256,7 +263,9 @@ const T = {
       fProd:"Product",fProdAny:"— select a product —",fVol:"Volume",
       fDose:"Dose",fConc:"Solution strength",fSample:"Sample volume",fAdded:"Solution added",
       oNeed:"Add to the batch",oStock:"Add to the sample",oGot:"Resulting dose",
-      hDoseCat:"Catalogue dosage",noDose:"This product has no dosage in the catalogue",
+      hDoseCat:"Catalogue dosage",dzPick:"Catalogue dosage",
+      dzNone:"No dosage in the catalogue — check with the supplier",
+      dzHint:"The lower limit is pre-filled. You can change the dose manually.",noDose:"This product has no dosage in the catalogue",
       hPrep:"How to prepare: a {c}% solution = {g} g of product made up to {v} mL with water.",
       hDrops:"≈ {n} drops (1 mL ≈ 20 drops)",
       hMedium:"The maths is volumetric: wine, spirit or vinegar — no difference.",
@@ -293,7 +302,9 @@ const T = {
       fProd:"Produs",fProdAny:"— alege produsul —",fVol:"Volum",
       fDose:"Doză",fConc:"Concentrația soluției",fSample:"Volumul probei",fAdded:"Soluție adăugată",
       oNeed:"De adăugat în lot",oStock:"De adăugat în probă",oGot:"Doza rezultată",
-      hDoseCat:"Dozaj din catalog",noDose:"Acest produs nu are dozaj în catalog",
+      hDoseCat:"Dozaj din catalog",dzPick:"Dozaj din catalog",
+      dzNone:"Fără dozaj în catalog — verificați la furnizor",
+      dzHint:"Limita inferioară e precompletată. Puteți modifica doza manual.",noDose:"Acest produs nu are dozaj în catalog",
       hPrep:"Preparare: soluție {c}% = {g} g produs dizolvat până la {v} mL cu apă.",
       hDrops:"≈ {n} picături (1 mL ≈ 20 picături)",
       hMedium:"Calculul este volumetric: vin, distilat sau oțet — fără diferență.",
@@ -565,17 +576,18 @@ function calcView(){
     `<option value="${esc(p.name)}"${p.name===CP?" selected":""}>${esc(p.name)}</option>`).join("");
   const seg = `
     <div class="seg">
-      <button class="${CM==='batch'?'on':''}" onclick="CM='batch';render(calcView())">${t("mBatch")}</button>
-      <button class="${CM==='stock'?'on':''}" onclick="CM='stock';render(calcView())">${t("mStock")}</button>
+      <button class="${CM==='batch'?'on':''}" onclick="CM='batch';render(calcView());onPick();doBatch()">${t("mBatch")}</button>
+      <button class="${CM==='stock'?'on':''}" onclick="CM='stock';render(calcView());onPick();doStock()">${t("mStock")}</button>
     </div>`;
 
   const picker = `
     <div class="fld">
       <label>${t("fProd")}</label>
-      <select id="cp" onchange="CP=this.value; ${CM==='batch'?'doBatch()':'doStock()'}">
+      <select id="cp" onchange="CP=this.value; onPick(); ${CM==='batch'?'doBatch()':'doStock()'}">
         <option value="">${t("fProdAny")}</option>${opts}
       </select>
-    </div>`;
+    </div>
+    <div class="dzhint" id="cpd"></div>`;
 
   if (CM === "batch"){
     return `<h2>${t("calcT")}</h2>${seg}${picker}
@@ -620,6 +632,35 @@ function calcView(){
       <input id="sa" type="number" inputmode="decimal" placeholder="0.5" oninput="doStock()">
     </div>
     <div id="sout"></div>`;
+}
+
+/* Выбрали продукт → сразу показываем дозировку из каталога
+   и подставляем нижнюю границу в поле дозы. */
+function onPick(){
+  const el = document.getElementById("cpd");
+  if (!el) return;
+  const p = DB.vason.products.find(x => x.name === CP);
+  if (!p){ el.style.display = "none"; el.innerHTML = ""; return; }
+
+  const d  = doseOf(CP);
+  el.style.display = "block";
+
+  if (!d){
+    el.innerHTML = `⚠️ ${t("dzNone")}`;
+    return;
+  }
+  const u = d.unit === "ml" ? "мл/гл" : "г/гл";
+  const list = d.ranges.map(r => {
+    const rng = r.lo === r.hi ? `${r.lo}` : `${r.lo}–${r.hi}`;
+    return `<b>${rng} ${u}</b>${r.note ? " " + esc(r.note) : ""}`;
+  }).join(" · ");
+
+  el.innerHTML = `💧 ${t("dzPick")}: ${list}
+    <span class="n">${t("dzHint")}</span>`;
+
+  /* подставить нижнюю границу в поле дозы текущего режима */
+  const f = document.getElementById(CM === "batch" ? "cd" : "sd");
+  if (f){ f.value = d.ranges[0].lo; f.dataset.touched = "1"; }
 }
 
 function doseOf(name){
@@ -860,7 +901,7 @@ function tabTo(tb){
   tab = tb; stack = [];
   render(tb==="home"?home(): tb==="search"?searchView(): tb==="calc"?calcView():
          tb==="probs"?probsView(): tb==="docs"?docsView(): helpView());
-  if (tb==="calc"){ CM==="batch" ? doBatch() : doStock(); }
+  if (tb==="calc"){ onPick(); CM==="batch" ? doBatch() : doStock(); }
   drawNav(); window.scrollTo(0,0);
 }
 function drawNav(){
