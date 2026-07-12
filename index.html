@@ -160,10 +160,10 @@
 
 <script>
 const TG = window.Telegram?.WebApp;
-const BOT = "techwinebot";   // @username бота, без @
+const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-calc5";
+const DATA_VERSION = "2026-07-12-botfix";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
