@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>TechWine — VasonGroup</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="problems.js?v=2026-07-12-prob"></script>
 <style>
   :root{
     --bg:#0b1a14; --bg2:#0f2419; --card:#13301f; --card2:#183d28;
@@ -136,6 +137,32 @@
   .tbl tr.dim td.v:after{content:" ⚠"}
   .warn{background:#3d2a13;border:1px solid var(--gold);border-radius:12px;
     padding:11px 12px;font-size:12.5px;color:#f0dcb4;margin-top:10px;line-height:1.5}
+  /* Проблемы */
+  .prob{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+    background:var(--card);border:1px solid var(--line);border-radius:13px;
+    padding:13px;margin-bottom:9px;cursor:pointer;color:var(--txt)}
+  .prob:active{background:var(--card2)}
+  .prob .ic{font-size:22px;flex:0 0 auto;line-height:1.2}
+  .prob .t{font-size:14.5px;font-weight:800;line-height:1.3}
+  .prob .s{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.4}
+  .blk{background:var(--card);border:1px solid var(--line);border-radius:13px;
+    padding:13px;margin-bottom:11px}
+  .blk h4{margin:0 0 9px;font-size:12px;color:var(--accent);font-weight:800;
+    text-transform:uppercase;letter-spacing:.5px}
+  .blk ul{margin:0;padding-left:17px}
+  .blk li{font-size:13px;color:#cfe3d6;margin-bottom:5px;line-height:1.45}
+  .br{border-left:3px solid var(--line);border-radius:0;padding:10px 0 10px 11px;margin-bottom:12px}
+  .br.ok{border-left-color:var(--accent)}
+  .br.warn{border-left-color:var(--gold)}
+  .br.bad{border-left-color:#d9534f}
+  .br .w{font-size:13.5px;font-weight:800;margin-bottom:5px}
+  .br.ok .w{color:var(--accent2)} .br.warn .w{color:#e8c884} .br.bad .w{color:#f0928e}
+  .br .a{font-size:13px;color:#cfe3d6;line-height:1.5}
+  .pill{display:inline-flex;align-items:center;gap:5px;background:#0a1c12;
+    border:1px solid var(--accent);border-radius:9px;padding:6px 9px;margin:7px 6px 0 0;
+    font-size:12px;color:var(--accent2);cursor:pointer;font-weight:600}
+  .pill .dz{color:var(--dim);font-weight:500;font-size:11px}
+  .pill.eq{border-color:var(--line);color:var(--txt)}
   .nav{
     position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);
     background:rgba(9,22,15,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
@@ -163,7 +190,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-botfix";
+const DATA_VERSION = "2026-07-12-prob";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -202,7 +229,11 @@ const T = {
       tNote:"⚠ — меньше 0,1 мл, точно не отмерить: возьмите раствор слабее.",
       hTons:"1 т вина = 1000 л = 10 гл",
       tblB:"СКОЛЬКО ВНОСИТЬ В ПАРТИЮ",tAmt:"Внести",
-      wCheck:"Проверьте дозу по прайсу перед внесением в товарную партию."},
+      wCheck:"Проверьте дозу по прайсу перед внесением в товарную партию.",
+      probs:"Проблемы",probsT:"ПРОБЛЕМЫ ВИНА",probsS:"Диагностика по анализам и решения",
+      pSympt:"Симптомы",pDiag:"Что измерить",pSolve:"Решения по порогам",
+      pEquip:"Оборудование JUCLAS",pPrev:"Профилактика",pSo2:"pH → свободный SO₂ (мг/л)",
+      pSo2h:"Целевой молекулярный SO₂",pDisc:"Пороги ориентировочные. Дозу подбирайте пробной обработкой на 50 мл и подтверждайте анализом. За результат в товарной партии отвечает винодел."},
   en:{home:"Home",search:"Search",docs:"Prices",help:"Help",
       juclas:"JUCLAS EQUIPMENT",juclasS:"Flotation, filtration, oxygenation",
       vason:"VASON PRODUCTS",vasonS:"Yeasts, tannins, enzymes",
@@ -235,7 +266,11 @@ const T = {
       tNote:"⚠ — under 0.1 mL, not measurable: use a weaker solution.",
       hTons:"1 t of wine = 1000 L = 10 hL",
       tblB:"HOW MUCH TO ADD TO THE BATCH",tAmt:"Add",
-      wCheck:"Check the dose against the price list before treating a commercial batch."},
+      wCheck:"Check the dose against the price list before treating a commercial batch.",
+      probs:"Faults",probsT:"WINE FAULTS",probsS:"Diagnosis by analysis, with solutions",
+      pSympt:"Symptoms",pDiag:"What to measure",pSolve:"Solutions by threshold",
+      pEquip:"JUCLAS equipment",pPrev:"Prevention",pSo2:"pH → free SO₂ (mg/L)",
+      pSo2h:"Target molecular SO₂",pDisc:"Thresholds are indicative. Establish the dose by a 50 mL bench trial and confirm by analysis. The winemaker remains responsible for the commercial batch."},
   ro:{home:"Acasă",search:"Căutare",docs:"Prețuri",help:"Ajutor",
       juclas:"ECHIPAMENTE JUCLAS",juclasS:"Flotație, filtrare, oxigenare",
       vason:"PRODUSE VASON",vasonS:"Drojdii, taninuri, enzime",
@@ -268,7 +303,11 @@ const T = {
       tNote:"⚠ — sub 0,1 mL, nu se poate măsura: folosiți o soluție mai slabă.",
       hTons:"1 t de vin = 1000 L = 10 hL",
       tblB:"CÂT DE ADĂUGAT ÎN LOT",tAmt:"De adăugat",
-      wCheck:"Verificați doza în lista de prețuri înainte de tratarea unui lot comercial."}
+      wCheck:"Verificați doza în lista de prețuri înainte de tratarea unui lot comercial.",
+      probs:"Defecte",probsT:"DEFECTELE VINULUI",probsS:"Diagnostic după analize și soluții",
+      pSympt:"Simptome",pDiag:"Ce se măsoară",pSolve:"Soluții după praguri",
+      pEquip:"Echipamente JUCLAS",pPrev:"Prevenție",pSo2:"pH → SO₂ liber (mg/L)",
+      pSo2h:"SO₂ molecular țintă",pDisc:"Pragurile sunt orientative. Stabiliți doza printr-un test pe 50 mL și confirmați prin analiză. Răspunderea pentru lotul comercial revine vinificatorului."}
 };
 const t = k => T[L][k];
 
@@ -308,6 +347,9 @@ function home(){
     </button>
     <button class="tile" onclick="tabTo('calc')">
       <div class="ic">🧮</div><div><div class="t">${t("calcT")}</div><div class="s">${t("calcS")}</div></div>
+    </button>
+    <button class="tile" onclick="tabTo('probs')">
+      <div class="ic">⚠️</div><div><div class="t">${t("probsT")}</div><div class="s">${t("probsS")}</div></div>
     </button>
     <button class="tile" onclick="toBot('ask')">
       <div class="ic">🤖</div><div><div class="t">${t("ai")}</div><div class="s">${t("aiS")}</div></div>
@@ -721,8 +763,85 @@ function doStock(){
     </div>${tiny}${doseTable(c, v)}`;
 }
 
+
+/* ── Проблемы вина ───────────────────────────────────────────
+   Данные — в problems.js. Дозы продуктов берутся из catalog.json,
+   поэтому в одном месте (каталоге) правится и доза, и здесь. */
+function probsView(){
+  const rows = PROBLEMS.map(p => `
+    <button class="prob" onclick="go('prob','${p.id}')">
+      <div class="ic">${p.icon}</div>
+      <div class="b"><div class="t">${p.title[L]}</div><div class="s">${p.sub[L]}</div></div>
+    </button>`).join("");
+  return `<h2>${t("probsT")}</h2><div class="sub">${t("probsS")}</div>` + rows;
+}
+
+/* Плашка продукта: имя + доза из каталога, клик → карточка продукта */
+function pill(name){
+  const p = DB.vason.products.find(x => x.name === name);
+  if (!p) return "";                        /* защита: продукта нет в каталоге */
+  const dz = ((p.dose || {})[L] || (p.dose || {}).ru || "").replace(/▸/g, "").trim();
+  return `<span class="pill" onclick="go('vprod','${enc(p.name)}')">
+    💊 ${esc(p.name)}${dz ? `<span class="dz">${esc(dz)}</span>` : ""}</span>`;
+}
+
+function eqpill(aid){
+  const a = DB.juclas.apparatus[aid];
+  if (!a) return "";
+  return `<span class="pill eq" onclick="go('japp','${aid}')">⚙️ ${esc(a.title[L])}</span>`;
+}
+
+function so2block(){
+  const rows = SO2_TABLE.map(r => `
+    <tr><td>${r.ph}</td><td class="v">${r.m05}</td><td class="v">${r.m06}</td><td class="v">${r.m08}</td></tr>`).join("");
+  return `
+    <div class="blk">
+      <h4>${t("pSo2")}</h4>
+      <table class="tbl">
+        <tr><th>pH</th><th style="text-align:right">0,5</th><th style="text-align:right">0,6</th><th style="text-align:right">0,8</th></tr>
+        ${rows}
+      </table>
+      <div class="s" style="font-size:11.5px;color:var(--dim);margin-top:8px">${t("pSo2h")}: 0,5 · 0,6 · 0,8 мг/л</div>
+    </div>`;
+}
+
+function prob(id){
+  const p = PROBLEMS.find(x => x.id === id);
+  const li = arr => `<ul>${arr.map(s => `<li>${esc(s)}</li>`).join("")}</ul>`;
+
+  const branches = p.branches.map(b => `
+    <div class="br ${b.lvl}">
+      <div class="w">${esc(b.when[L])}</div>
+      <div class="a">${esc(b.act[L])}</div>
+      <div>${(b.products || []).map(pill).join("")}</div>
+    </div>`).join("");
+
+  const equip = (p.equip || []).length
+    ? `<div class="blk"><h4>${t("pEquip")}</h4><div>${p.equip.map(eqpill).join("")}</div></div>` : "";
+
+  return back() + `
+    <h2>${p.icon} ${p.title[L]}</h2>
+    <div class="sub">${p.sub[L]}</div>
+
+    <div class="blk"><h4>${t("pSympt")}</h4>${li(p.symptoms[L])}</div>
+    <div class="blk"><h4>${t("pDiag")}</h4>${li(p.diag[L])}</div>
+
+    <div class="blk">
+      <h4>${t("pSolve")}</h4>
+      ${branches}
+    </div>
+
+    ${p.so2table ? so2block() : ""}
+    ${equip}
+
+    <div class="blk"><h4>${t("pPrev")}</h4>${li(p.prevent[L])}</div>
+
+    <div class="warn">${t("pDisc")}</div>
+    <button class="btn pri" onclick="toBot('ask')">${t("ask")}</button>`;
+}
+
 /* ── Роутер ─────────────────────────────────────────────── */
-const VIEWS = {home, juclas, jcat, japp, vason, vsec, vprod, protocols};
+const VIEWS = {home, juclas, jcat, japp, vason, vsec, vprod, protocols, prob};
 function go(name, arg){
   stack.push([name, arg]);
   render(VIEWS[name](arg));
@@ -740,12 +859,12 @@ function render(html){ document.getElementById("view").innerHTML = html; }
 function tabTo(tb){
   tab = tb; stack = [];
   render(tb==="home"?home(): tb==="search"?searchView(): tb==="calc"?calcView():
-         tb==="docs"?docsView(): helpView());
+         tb==="probs"?probsView(): tb==="docs"?docsView(): helpView());
   if (tb==="calc"){ CM==="batch" ? doBatch() : doStock(); }
   drawNav(); window.scrollTo(0,0);
 }
 function drawNav(){
-  const items=[["home","🏠"],["search","🔍"],["calc","🧮"],["docs","💶"],["help","💬"]];
+  const items=[["home","🏠"],["search","🔍"],["probs","⚠️"],["calc","🧮"],["docs","💶"]];
   document.getElementById("nav").innerHTML = items.map(([k,ic])=>`
     <button class="${tab===k?'on':''}" onclick="tabTo('${k}')">
       <div class="ic">${ic}</div>${t(k)}
