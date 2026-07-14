@@ -207,13 +207,13 @@ const T = {
       vason:"ПРОДУКТЫ VASON",vasonS:"Дрожжи, танины, ферменты",
       searchT:"ПОИСК",searchS:"Продукт, аппарат или артикул",
       docsT:"ПРАЙСЫ И КАТАЛОГИ",docsS:"PDF в чат бота",
-      ai:"СПРОСИТЬ ИИ",aiS:"Дозировки, протоколы, подбор",
+      ai:"ИИ-КОНСУЛЬТАНТ",aiS:"Открыть чат с ботом",
       contact:"КОНТАКТЫ",contactS:"TechWine · VasonGroup",
-      free:"ВЫБРАТЬ ОБОРУДОВАНИЕ И ПРОДУКТЫ",freeS:"Полный каталог VasonGroup 2026",
+      free:"КАТАЛОГ VASONGROUP 2026",freeS:"TechWine — представитель в Молдове",
       ph:"Введите название или артикул…",
       nores:"Ничего не найдено",minc:"Введите минимум 2 символа",
       price:"💶 Узнать цену в боте",pdf:"📄 Скачать PDF в боте",
-      ask:"💬 Задать вопрос ИИ",tech:"📊 Технические данные",
+      ask:"💬 Спросить о продукте в чате",tech:"📊 Технические данные",
       cat:"Категории",prod:"продуктов",app:"аппаратов",
       backT:"‹ Назад",arts:"Артикулы",packs:"Фасовки",dose:"Дозировка",
       protocols:"ПРОТОКОЛЫ ВИНОДЕЛИЯ",protocolsS:"Готовые схемы обработки",
@@ -246,13 +246,13 @@ const T = {
       vason:"VASON PRODUCTS",vasonS:"Yeasts, tannins, enzymes",
       searchT:"SEARCH",searchS:"Product, equipment or code",
       docsT:"PRICE LISTS & CATALOGUES",docsS:"PDF to bot chat",
-      ai:"ASK AI",aiS:"Dosages, protocols, selection",
+      ai:"AI CONSULTANT",aiS:"Opens bot chat",
       contact:"CONTACTS",contactS:"TechWine · VasonGroup",
-      free:"BROWSE EQUIPMENT & PRODUCTS",freeS:"Full VasonGroup catalogue 2026",
+      free:"VASONGROUP CATALOGUE 2026",freeS:"TechWine — official representative",
       ph:"Type a name or article code…",
       nores:"Nothing found",minc:"Enter at least 2 characters",
       price:"💶 Get price in bot",pdf:"📄 Download PDF in bot",
-      ask:"💬 Ask the AI",tech:"📊 Technical data",
+      ask:"💬 Ask about this in chat",tech:"📊 Technical data",
       cat:"Categories",prod:"products",app:"units",
       backT:"‹ Back",arts:"Article codes",packs:"Pack sizes",dose:"Dosage",
       protocols:"WINEMAKING PROTOCOLS",protocolsS:"Ready-made treatment schemes",
@@ -285,13 +285,13 @@ const T = {
       vason:"PRODUSE VASON",vasonS:"Drojdii, taninuri, enzime",
       searchT:"CĂUTARE",searchS:"Produs, aparat sau cod",
       docsT:"LISTE DE PREȚURI",docsS:"PDF în chatul botului",
-      ai:"ÎNTREABĂ AI",aiS:"Dozaje, protocoale, selecție",
+      ai:"CONSULTANT AI",aiS:"Deschide chatul botului",
       contact:"CONTACTE",contactS:"TechWine · VasonGroup",
-      free:"ALEGE ECHIPAMENTE ȘI PRODUSE",freeS:"Catalogul complet VasonGroup 2026",
+      free:"CATALOG VASONGROUP 2026",freeS:"TechWine — reprezentant în Moldova",
       ph:"Scrie numele sau codul…",
       nores:"Nu s-a găsit nimic",minc:"Introdu cel puțin 2 caractere",
       price:"💶 Află prețul în bot",pdf:"📄 Descarcă PDF în bot",
-      ask:"💬 Întreabă AI",tech:"📊 Date tehnice",
+      ask:"💬 Întreabă în chat",tech:"📊 Date tehnice",
       cat:"Categorii",prod:"produse",app:"aparate",
       backT:"‹ Înapoi",arts:"Coduri",packs:"Ambalaje",dose:"Dozaj",
       protocols:"PROTOCOALE DE VINIFICAȚIE",protocolsS:"Scheme gata de tratament",
@@ -529,7 +529,14 @@ function helpView(){
     <div class="card">
       <h3>TechWine</h3>
       <div class="tagline">${t("contactS")}</div>
-      <div class="desc">📧 Ceo@tech-wine.com\n📱 +373 798 14998\n📧 sales@tech-wine.com</div>
+      <div class="desc">AVS Tech Wine — официальный представитель итальянской группы VasonGroup в Молдове.
+
+⚙️ JUCLAS — оборудование для виноделия
+🍷 VASON — энологические продукты
+
+📧 sales@tech-wine.com
+📧 Ceo@tech-wine.com
+📱 +373 798 14998</div>
     </div>
     <button class="btn pri" onclick="toBot('ask')">${t("ask")}</button>
     <button class="btn" onclick="toBot('contact')">${t("contact")}</button>`;
