@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-dose";
+const DATA_VERSION = "2026-07-12-ask";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -207,7 +207,7 @@ const T = {
       vason:"ПРОДУКТЫ VASON",vasonS:"Дрожжи, танины, ферменты",
       searchT:"ПОИСК",searchS:"Продукт, аппарат или артикул",
       docsT:"ПРАЙСЫ И КАТАЛОГИ",docsS:"PDF в чат бота",
-      ai:"ИИ-КОНСУЛЬТАНТ",aiS:"Открыть чат с ботом",
+      ai:"ЗАДАТЬ ВОПРОС",aiS:"Напишите в чат бота — ответит ИИ",
       contact:"КОНТАКТЫ",contactS:"TechWine · VasonGroup",
       free:"КАТАЛОГ VASONGROUP 2026",freeS:"TechWine — представитель в Молдове",
       ph:"Введите название или артикул…",
@@ -246,7 +246,7 @@ const T = {
       vason:"VASON PRODUCTS",vasonS:"Yeasts, tannins, enzymes",
       searchT:"SEARCH",searchS:"Product, equipment or code",
       docsT:"PRICE LISTS & CATALOGUES",docsS:"PDF to bot chat",
-      ai:"AI CONSULTANT",aiS:"Opens bot chat",
+      ai:"ASK A QUESTION",aiS:"Write in the bot chat — the AI replies",
       contact:"CONTACTS",contactS:"TechWine · VasonGroup",
       free:"VASONGROUP CATALOGUE 2026",freeS:"TechWine — official representative",
       ph:"Type a name or article code…",
@@ -285,7 +285,7 @@ const T = {
       vason:"PRODUSE VASON",vasonS:"Drojdii, taninuri, enzime",
       searchT:"CĂUTARE",searchS:"Produs, aparat sau cod",
       docsT:"LISTE DE PREȚURI",docsS:"PDF în chatul botului",
-      ai:"CONSULTANT AI",aiS:"Deschide chatul botului",
+      ai:"PUNE O ÎNTREBARE",aiS:"Scrieți în chatul botului — răspunde AI",
       contact:"CONTACTE",contactS:"TechWine · VasonGroup",
       free:"CATALOG VASONGROUP 2026",freeS:"TechWine — reprezentant în Moldova",
       ph:"Scrie numele sau codul…",
