@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>TechWine — VasonGroup</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="problems.js?v=2026-07-12-prob"></script>
+<script src="problems.js?v=2026-07-14-nocold"></script>
 <style>
   :root{
     --bg:#0b1a14; --bg2:#0f2419; --card:#13301f; --card2:#183d28;
@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-12-ask";
+const DATA_VERSION = "2026-07-14-nocold";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");

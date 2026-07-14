@@ -1296,6 +1296,120 @@ const PROBLEMS = [
          "Oxigenul e dușmanul tiolilor: inertizare din prima zi",
          "Bentonită prin titrare: ia aroma odată cu proteina"]
   }
+},
+/* ─── 16. ВИНОДЕЛИЕ БЕЗ ОХЛАЖДЕНИЯ ─────────────────────────────
+   Сценарий, а не дефект: хозяйство без холодильного оборудования.
+   Продукты и дозы — из каталога Vason 2H2026. */
+{
+  id: "nocold", icon: "🌡️",
+  title: { ru: "Виноделие без холода", en: "Winemaking without cooling", ro: "Vinificație fără frig" },
+  sub: {
+    ru: "Нет холодильного оборудования: что заменит холод на каждом этапе",
+    en: "No cooling equipment: what replaces cold at each stage",
+    ro: "Fără echipament de răcire: ce înlocuiește frigul la fiecare etapă"
+  },
+  symptoms: {
+    ru: ["Сусло не отстаивается — нечем охладить на ночь",
+         "Брожение уходит за 30 °C, аромат «выкипает»",
+         "Вино в тёплом погребе окисляется и ловит Brett",
+         "Тартраты выпадают у клиента: холодной стабилизации не было"],
+    en: ["The must won't settle — nothing to chill it overnight",
+         "Fermentation runs past 30 °C, aroma boils off",
+         "Wine in a warm cellar oxidises and picks up Brett",
+         "Tartrates drop at the customer: no cold stabilisation was done"],
+    ro: ["Mustul nu se limpezește — nimic cu ce să-l răcești",
+         "Fermentația depășește 30 °C, aroma se pierde",
+         "Vinul în pivnița caldă se oxidează și prinde Brett",
+         "Tartrații precipită la client: nu a fost stabilizare la rece"]
+  },
+  diag: {
+    ru: ["Температура сусла и вина — измерять, а не «на ощупь»",
+         "YAN сусла: в жару дрожжи требуют больше азота",
+         "pH — от него зависит доза SO₂ (таблица ниже)",
+         "Объём ёмкости: чем меньше, тем легче держать температуру"],
+    en: ["Must and wine temperature — measure it, don't guess",
+         "Must YAN: in the heat yeast needs more nitrogen",
+         "pH — it sets the SO₂ dose (table below)",
+         "Tank size: the smaller it is, the easier to hold temperature"],
+    ro: ["Temperatura mustului și a vinului — măsurați, nu ghiciți",
+         "YAN must: la căldură drojdiile cer mai mult azot",
+         "pH — determină doza de SO₂ (tabel mai jos)",
+         "Volumul cisternei: cu cât mai mic, cu atât mai ușor de controlat"]
+  },
+  branches: [
+    { when: { ru: "Этап 1. Осветление сусла без холодного отстоя",
+              en: "Stage 1. Clarifying the must without cold settling",
+              ro: "Etapa 1. Limpezirea mustului fără decantare la rece" },
+      lvl: "warn",
+      act: { ru: "Флотация вместо холода: фермент разрушает пектины, флотатор поднимает муть за час. Это дешевле чиллера и решает задачу в жару. Без флотатора — фермент + бентонит и отстой при той температуре, что есть.",
+             en: "Flotation instead of cold: the enzyme breaks the pectins, the flotation unit lifts the haze within an hour. Cheaper than a chiller and it works in the heat. Without a flotation unit — enzyme plus bentonite and settle at whatever temperature you have.",
+             ro: "Flotație în loc de frig: enzima descompune pectinele, flotatorul ridică tulbureala într-o oră. Mai ieftin decât un chiller. Fără flotator — enzimă plus bentonită." },
+      products: ["FLOTTOZIMA® P", "ZIMACLAR® FLOT", "FLOTTOBENT®", "FLOTTOPLUS® 2.0", "FLOTTOGEL®"] },
+
+    { when: { ru: "Этап 2. Старт: защита сусла, пока нет холода",
+              en: "Stage 2. Start: protecting the must without cold",
+              ro: "Etapa 2. Start: protecția mustului fără frig" },
+      lvl: "warn",
+      act: { ru: "Биопротекция заменяет холод и часть SO₂: отобранные не-Saccharomyces заселяют сусло и не дают развиваться дикой флоре и окислению. Вносить сразу на дробилке, до засева основных дрожжей.",
+             en: "Bioprotection replaces cold and part of the SO₂: selected non-Saccharomyces colonise the must and keep wild flora and oxidation at bay. Add at the crusher, before the main yeast.",
+             ro: "Bioprotecția înlocuiește frigul și o parte din SO₂: non-Saccharomyces selecționate colonizează mustul. Adăugați la zdrobitor, înainte de drojdia principală." },
+      products: ["VIW® SHIELD MP", "VIW® SHIELD TD", "VIW® SHIELD LT", "X-PRO® GRAPES"] },
+
+    { when: { ru: "Этап 3. Брожение при 25–30 °C",
+              en: "Stage 3. Fermenting at 25–30 °C",
+              ro: "Etapa 3. Fermentație la 25–30 °C" },
+      lvl: "bad",
+      act: { ru: "Обычные штаммы в жару встают и дают H₂S. Нужны дрожжи с широким температурным окном: IFRUIT® WHITE работает 15–30 °C. Азота в жару нужно больше — питание в две дачи, не одной. Красные не пускать выше 30 °C, белые выше 20 °C — иначе аромат уходит безвозвратно.",
+             en: "Ordinary strains stall in the heat and produce H₂S. You need yeast with a wide temperature window: IFRUIT® WHITE works at 15–30 °C. Heat means more nitrogen — feed in two additions, not one. Keep reds below 30 °C and whites below 20 °C, otherwise the aroma is gone for good.",
+             ro: "Tulpinile obișnuite se blochează la căldură și produc H₂S. Aveți nevoie de drojdii cu fereastră largă: IFRUIT® WHITE lucrează la 15–30 °C. La căldură e nevoie de mai mult azot — hrănire în două reprize." },
+      products: ["LIEVITO IFRUIT® WHITE", "LIEVITO IFRUIT® RED", "V ACTIV PREMIUM®", "BOOSTER ACTIV PREMIUM®"] },
+
+    { when: { ru: "Брожение встало от перегрева",
+              en: "Fermentation stuck from overheating",
+              ro: "Fermentație blocată din cauza căldurii" },
+      lvl: "bad",
+      act: { ru: "Спасать сразу: сахар + тепло = уксусные бактерии за сутки. Рестарт спиртоустойчивым штаммом с адаптацией, детоксикация среды адсорбентом. Подробнее — раздел «Застрявшее брожение».",
+             en: "Act at once: sugar plus warmth breeds acetic bacteria within a day. Restart with an alcohol-tolerant strain, acclimatised, and detoxify the medium with an adsorbent. See the 'Stuck fermentation' section.",
+             ro: "Acționați imediat: zahăr plus căldură = bacterii acetice în 24 h. Restart cu tulpină alcool-tolerantă și detoxifierea mediului. Vezi „Fermentație blocată”." },
+      products: ["LIEVITO CLASSIC BAYANUS", "L.P.A. — АКТИВИРОВАННАЯ ДРОЖЖЕВАЯ ПАСТА", "MICOSORB® PLUS"] },
+
+    { when: { ru: "Этап 4. Хранение в тёплом погребе",
+              en: "Stage 4. Storage in a warm cellar",
+              ro: "Etapa 4. Stocare în pivniță caldă" },
+      lvl: "warn",
+      act: { ru: "Тепло ускоряет окисление и будит Brett. Свободный SO₂ считать по pH (таблица ниже), а не «как обычно»: при pH 3,6 нужен 31 мг/л вместо привычных 25. Антиоксидантный щит и хитозан против микробиологии обязательны.",
+             en: "Warmth speeds up oxidation and wakes Brett. Set free SO₂ by pH (see table), not by habit: at pH 3.6 you need 31 mg/L instead of the usual 25. An antioxidant shield and chitosan against microbiology are essential.",
+             ro: "Căldura accelerează oxidarea și trezește Brett. SO₂ liber după pH (vezi tabel): la pH 3,6 sunt necesari 31 mg/L, nu 25. Scut antioxidant și chitozan — obligatorii." },
+      products: ["X-PRO® PROTECTION", "V ANTIOX®", "SAFE TAN® SG", "KITOSMART"] },
+
+    { when: { ru: "Этап 5. Тартратная стабильность без холода",
+              en: "Stage 5. Tartrate stability without cold",
+              ro: "Etapa 5. Stabilitate tartrică fără frig" },
+      lvl: "warn",
+      act: { ru: "Единственный доступный путь без оборудования — ингибиторы кристаллизации. Гуммиарабик вносить ПОСЛЕ финальной фильтрации. CRISTALLITE® здесь НЕ поможет: это ускоритель кристаллизации, ему всё равно нужен холод. Альтернатива на объёмах — электродиализ: работает при комнатной температуре.",
+             en: "Without equipment the only route is crystallisation inhibitors. Gum arabic goes in AFTER final filtration. CRISTALLITE® will NOT help here: it accelerates crystallisation and still needs cold. At volume, electrodialysis is the alternative — it runs at room temperature.",
+             ro: "Fără echipament, singura cale sunt inhibitorii de cristalizare. Guma arabică se adaugă DUPĂ filtrarea finală. CRISTALLITE® NU ajută aici: are nevoie tot de frig. La volume — electrodializă, la temperatura camerei." },
+      products: ["SMARTGUM®", "ICON® GUM", "ARABAN®"] }
+  ],
+  so2table: true,
+  equip: ["app_easyfloat", "app_ed", "app_mastermind_qft"],
+  prevent: {
+    ru: ["Собирать ночью или ранним утром — самый дешёвый «холод»",
+         "Бродить в мелких ёмкостях: они не разгоняются по температуре",
+         "Флотатор окупается быстрее чиллера и решает больше задач",
+         "Мокрая мешковина на танке и вентилятор дают −3…5 °C бесплатно",
+         "Биопротекция вместо холода на старте — не роскошь, а замена оборудования"],
+    en: ["Harvest at night or early morning — the cheapest 'cold' available",
+         "Ferment in small tanks: they do not run away in temperature",
+         "A flotation unit pays back faster than a chiller and solves more problems",
+         "Wet hessian on the tank plus a fan gives −3…5 °C for free",
+         "Bioprotection instead of cold at the start is equipment replacement, not luxury"],
+    ro: ["Recoltați noaptea sau dimineața devreme — cel mai ieftin „frig”",
+         "Fermentați în cisterne mici: temperatura nu scapă de sub control",
+         "Flotatorul se amortizează mai repede decât un chiller",
+         "Pânză udă pe cisternă plus ventilator: −3…5 °C gratuit",
+         "Bioprotecția la start înlocuiește echipamentul, nu e un lux"]
+  }
 }
 
 ];
