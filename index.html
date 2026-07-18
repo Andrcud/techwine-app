@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-14-senddata";
+const DATA_VERSION = "2026-07-14-diag";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -237,6 +237,9 @@ const T = {
       hTons:"1 т вина = 1000 л = 10 гл",
       tblB:"СКОЛЬКО ВНОСИТЬ В ПАРТИЮ",tAmt:"Внести",
       wCheck:"Проверьте дозу по прайсу перед внесением в товарную партию.",
+      mOk:"✅ Прямой режим: файл придёт в чат сразу",
+      mBad:"⚠️ Приложение открыто НЕ с нижней кнопки. Файлы так не приходят.\nЗакройте это окно → в чате нажмите кнопку «🚀 Открыть каталог» ВНИЗУ (на месте клавиатуры) → откройте Прайсы отсюда.",
+      mBadBtn:"Закрыть и открыть чат бота",
       probs:"Проблемы",probsT:"ПРОБЛЕМЫ ВИНА",probsS:"Диагностика по анализам и решения",
       pSympt:"Симптомы",pDiag:"Что измерить",pSolve:"Решения по порогам",
       pEquip:"Оборудование JUCLAS",pPrev:"Профилактика",pSo2:"pH → свободный SO₂ (мг/л)",
@@ -276,6 +279,9 @@ const T = {
       hTons:"1 t of wine = 1000 L = 10 hL",
       tblB:"HOW MUCH TO ADD TO THE BATCH",tAmt:"Add",
       wCheck:"Check the dose against the price list before treating a commercial batch.",
+      mOk:"✅ Direct mode: the file arrives in the chat instantly",
+      mBad:"⚠️ The app was NOT opened from the bottom button, so files cannot be delivered.\nClose this window → in the chat tap «🚀 Open catalogue» at the BOTTOM (where the keyboard is) → open Prices from there.",
+      mBadBtn:"Close and open the bot chat",
       probs:"Faults",probsT:"WINE FAULTS",probsS:"Diagnosis by analysis, with solutions",
       pSympt:"Symptoms",pDiag:"What to measure",pSolve:"Solutions by threshold",
       pEquip:"JUCLAS equipment",pPrev:"Prevention",pSo2:"pH → free SO₂ (mg/L)",
@@ -315,6 +321,9 @@ const T = {
       hTons:"1 t de vin = 1000 L = 10 hL",
       tblB:"CÂT DE ADĂUGAT ÎN LOT",tAmt:"De adăugat",
       wCheck:"Verificați doza în lista de prețuri înainte de tratarea unui lot comercial.",
+      mOk:"✅ Mod direct: fișierul ajunge imediat în chat",
+      mBad:"⚠️ Aplicația NU a fost deschisă din butonul de jos, fișierele nu pot fi livrate.\nÎnchideți → în chat apăsați «🚀 Deschide catalogul» de JOS → deschideți Prețuri de acolo.",
+      mBadBtn:"Închide și deschide chatul",
       probs:"Defecte",probsT:"DEFECTELE VINULUI",probsS:"Diagnostic după analize și soluții",
       pSympt:"Simptome",pDiag:"Ce se măsoară",pSolve:"Soluții după praguri",
       pEquip:"Echipamente JUCLAS",pPrev:"Prevenție",pSo2:"pH → SO₂ liber (mg/L)",
@@ -537,7 +546,21 @@ function docsView(){
       <div class="ic">💶</div><div class="b"><div class="t">${d.label}</div></div>
       <div class="n">PDF</div>
     </button>`).join("");
-  return `<h2>${t("docsT")}</h2><div class="sub">${t("priceNote")}</div>` + rows;
+  /* Видимый индикатор: работает ли прямая доставка файлов.
+     Без него пользователь не понимает, почему PDF не приходит. */
+  const mode = KB_MODE
+    ? `<div class="dzhint" style="display:block">${t("mOk")}</div>`
+    : `<div class="warn">${esc(t("mBad")).replace(/\n/g,"<br>")}
+         <button class="btn" style="margin-top:10px" onclick="openBotChat()">${t("mBadBtn")}</button>
+       </div>`;
+  return `<h2>${t("docsT")}</h2><div class="sub">${t("priceNote")}</div>${mode}` + rows;
+}
+
+/* Просто открыть чат с ботом, без payload — там нижняя кнопка и меню «Прайсы». */
+function openBotChat(){
+  const url = `https://t.me/${BOT}`;
+  if (TG?.openTelegramLink) TG.openTelegramLink(url);
+  else window.open(url, "_blank");
 }
 
 function helpView(){
