@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-14-diag";
+const DATA_VERSION = "2026-07-14-direct";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -541,19 +541,23 @@ function sim(a,b){
 }
 
 function docsView(){
+  /* Если у документа есть url — файл лежит рядом с приложением и
+     открывается напрямую. Это работает всегда: без бота, без /start,
+     на телефоне и на компьютере одинаково. */
   const rows = DB.docs.map(d=>`
-    <button class="row" onclick="toBot('${d.id}')">
+    <button class="row" onclick="${d.url ? `openDoc('${d.url}')` : `toBot('${d.id}')`}">
       <div class="ic">💶</div><div class="b"><div class="t">${d.label}</div></div>
       <div class="n">PDF</div>
     </button>`).join("");
-  /* Видимый индикатор: работает ли прямая доставка файлов.
-     Без него пользователь не понимает, почему PDF не приходит. */
-  const mode = KB_MODE
-    ? `<div class="dzhint" style="display:block">${t("mOk")}</div>`
-    : `<div class="warn">${esc(t("mBad")).replace(/\n/g,"<br>")}
-         <button class="btn" style="margin-top:10px" onclick="openBotChat()">${t("mBadBtn")}</button>
-       </div>`;
-  return `<h2>${t("docsT")}</h2><div class="sub">${t("priceNote")}</div>${mode}` + rows;
+  return `<h2>${t("docsT")}</h2><div class="sub">${t("priceNote")}</div>` + rows;
+}
+
+/* Открыть PDF, лежащий рядом с приложением. */
+function openDoc(file){
+  TG?.HapticFeedback?.impactOccurred?.("light");
+  const url = new URL(file, location.href).href;
+  if (TG?.openLink) TG.openLink(url);
+  else window.open(url, "_blank");
 }
 
 /* Просто открыть чат с ботом, без payload — там нижняя кнопка и меню «Прайсы». */
