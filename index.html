@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>TechWine — VasonGroup</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="problems.js?v=2026-07-14-nocold"></script>
+<script src="problems.js?v=2026-07-14-senddata"></script>
 <style>
   :root{
     --bg:#0b1a14; --bg2:#0f2419; --card:#13301f; --card2:#183d28;
@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-14-pdf";
+const DATA_VERSION = "2026-07-14-senddata";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -323,14 +323,23 @@ const T = {
 const t = k => T[L][k];
 
 /* ── Возврат в бота: закрываем WebApp и открываем чат с payload ── */
+/* Приложение открыто с КЛАВИАТУРНОЙ кнопки бота (?mode=kb)?
+   Только в этом режиме Telegram разрешает sendData — прямую передачу
+   данных боту. Иначе остаётся deep-link ?start=, который на десктопе
+   теряет payload и шлёт голый /start. */
+const KB_MODE = new URLSearchParams(location.search).get("mode") === "kb";
+
 function toBot(payload){
-  const url = `https://t.me/${BOT}?start=${payload}`;
   TG?.HapticFeedback?.impactOccurred?.("medium");
-  /* openTelegramLink открывает чат с ботом и передаёт ?start=payload.
-     НЕ вызываем TG.close() сразу после: на десктопе close прерывает
-     переход, и чат открывается «холодным» с кнопкой START.
-     Пусть Telegram сам переключит на чат — приложение закроется само. */
-  if (TG?.openTelegramLink) {
+
+  /* Надёжный путь: бот получает payload напрямую, файл приходит сразу. */
+  if (KB_MODE && TG?.sendData){
+    try { TG.sendData(payload); return; } catch(e){}
+  }
+
+  /* Запасной путь для запуска из меню/инлайн-кнопки. */
+  const url = `https://t.me/${BOT}?start=${payload}`;
+  if (TG?.openTelegramLink){
     TG.openTelegramLink(url);
   } else {
     window.open(url, "_blank");
