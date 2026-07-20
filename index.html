@@ -195,7 +195,7 @@ const TG = window.Telegram?.WebApp;
 const BOT = "techwine_assistant_bot";   // @username бота, без @
 /* Версия данных. ОБЯЗАТЕЛЬНО увеличивать при каждом обновлении catalog.json,
    иначе у пользователей навсегда останется старый каталог из кеша браузера. */
-const DATA_VERSION = "2026-07-14-direct";
+const DATA_VERSION = "2026-07-14-allpdf";
 
 let L = localStorage.getItem("tw_lang") || (TG?.initDataUnsafe?.user?.language_code === "ro" ? "ro"
       : TG?.initDataUnsafe?.user?.language_code === "en" ? "en" : "ru");
@@ -426,7 +426,8 @@ function japp(aid){
     </div>
     ${a.tech[L] ? `<div class="card"><div class="tagline">${t("tech")}</div><div class="desc">${esc(a.tech[L])}</div></div>` : ""}
     <button class="btn gold" onclick="toBot('p_${slug(aid)}')">${t("price")}</button>
-    ${a.pdf ? `<button class="btn" onclick="toBot('pdf_${slug(aid)}')">${t("pdf")}</button>` : ""}
+    ${a.pdfUrl ? `<button class="btn" onclick="openDoc('${a.pdfUrl}')">${t("pdf")}</button>`
+      : a.pdf ? `<button class="btn" onclick="toBot('pdf_${slug(aid)}')">${t("pdf")}</button>` : ""}
     <button class="btn pri" onclick="toBot('ask_${slug(aid)}')">${t("ask")}</button>
     <div class="sub" style="margin-top:12px">${t("priceNote")}</div>`;
 }
@@ -473,7 +474,7 @@ function vprod(nameEnc){
 
 function protocols(){
   const rows = DB.protocols.map(p=>`
-    <button class="row" onclick="toBot('${p.id}')">
+    <button class="row" onclick="${p.url ? `openDoc('${p.url}')` : `toBot('${p.id}')`}">
       <div class="ic">📋</div><div class="b"><div class="t">${p.label}</div></div>
       <div class="n">PDF</div>
     </button>`).join("");
